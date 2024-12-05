@@ -8,6 +8,7 @@ export type BedrockKnowledgeBase = {
   parsingModel?: ParsingModel;
   webCrawlingScope?: WebCrawlingScope;
   webCrawlingFilters?: WebCrawlingFilters;
+  kbMetadataFilter: KBMetadataFilter;
 };
 
 export type EmbeddingsModel = 'titan_v2' | 'cohere_multilingual_v3';
@@ -82,3 +83,5 @@ export type SearchParams = {
 };
 
 export type SearchType = 'hybrid' | 'semantic';
+
+export type KBMetadataFilter = Filter | dict

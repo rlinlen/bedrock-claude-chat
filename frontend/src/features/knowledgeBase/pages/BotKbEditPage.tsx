@@ -57,7 +57,9 @@ import {
   SearchParams,
   SearchType,
   WebCrawlingScope,
+  KBMetadataFilter,
 } from '../types';
+import FilterBuilder from '../../../components/FilterBuilder';
 
 const edgeGenerationParams =
   import.meta.env.VITE_APP_ENABLE_MISTRAL === 'true'
@@ -109,6 +111,7 @@ const BotKbEditPage: React.FC = () => {
     },
   ]);
   const [webCrawlingScope, setWebCrawlingScope] = useState<WebCrawlingScope>('DEFAULT');
+  const [kbMetadataFilter, setKBMetadataFilter] = useState<KBMetadataFilter>({});
 
   const [knowledgeBaseId, setKnowledgeBaseId] = useState<string | null>(null); // Send null when creating a new bot
   const [embeddingsModel, setEmbeddingsModel] =
@@ -492,6 +495,7 @@ const BotKbEditPage: React.FC = () => {
             includePatterns: bot.bedrockKnowledgeBase.webCrawlingFilters?.includePatterns || [''],
             excludePatterns: bot.bedrockKnowledgeBase.webCrawlingFilters?.excludePatterns || [''],
           });
+          setKBMetadataFilter(bot.bedrockKnowledgeBase.kbMetadataFilter);
         })
         .finally(() => {
           setIsLoading(false);
@@ -1040,6 +1044,7 @@ const BotKbEditPage: React.FC = () => {
         parsingModel,
         webCrawlingScope,
         webCrawlingFilters,
+        kbMetadataFilter,
       },
       bedrockGuardrails: {
         isGuardrailEnabled:
@@ -1104,6 +1109,7 @@ const BotKbEditPage: React.FC = () => {
     parsingModel,
     webCrawlingScope,
     webCrawlingFilters,
+    kbMetadataFilter,
   ]);
 
   const onClickEdit = useCallback(() => {
@@ -1161,6 +1167,7 @@ const BotKbEditPage: React.FC = () => {
           parsingModel,
           webCrawlingScope,
           webCrawlingFilters,
+          kbMetadataFilter
         },
         bedrockGuardrails: {
           isGuardrailEnabled:
@@ -1231,6 +1238,7 @@ const BotKbEditPage: React.FC = () => {
     parsingModel,
     webCrawlingScope,
     webCrawlingFilters,
+    kbMetadataFilter,
   ]);
 
   const [isOpenSamples, setIsOpenSamples] = useState(false);
@@ -1379,6 +1387,18 @@ const BotKbEditPage: React.FC = () => {
                       onClick={onClickAddS3Url}>
                       {t('button.add')}
                     </Button>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div className="font-semibold">Metadata Filter</div>
+                  <div className="text-sm text-aws-font-color/50">
+                  Specifies the filters to use on the metadata attributes in the knowledge base data sources before returning results.</div>
+                  <div className="text-sm text-aws-font-color/50">*** If using AND or OR Group, at least 2 basic filters are required. ***</div>
+                  <div className="mt-2 flex w-full flex-col gap-1">
+                    <FilterBuilder
+                      rootFilter={kbMetadataFilter}
+                      setRootFilter={setKBMetadataFilter}
+                    />
                   </div>
                 </div>
 

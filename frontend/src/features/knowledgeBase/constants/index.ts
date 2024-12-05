@@ -58,6 +58,7 @@ export const DEFAULT_BEDROCK_KNOWLEDGEBASE: BedrockKnowledgeBase = {
     maxResults: 20,
     searchType: 'hybrid',
   },
+  kbMetadataFilter: {}
 };
 
 export const DEFAULT_FIXED_CHUNK_PARAMS: FixedSizeParams = {

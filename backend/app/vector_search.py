@@ -1,3 +1,5 @@
+from decimal import Decimal
+import json
 import logging
 from typing import TypedDict
 from urllib.parse import urlparse
@@ -19,7 +21,6 @@ from mypy_boto3_bedrock_agent_runtime.type_defs import (
 
 logger = logging.getLogger(__name__)
 agent_client = get_bedrock_agent_client()
-
 
 class SearchResult(TypedDict):
     bot_id: str
@@ -70,16 +71,36 @@ def _bedrock_knowledge_base_search(bot: BotModel, query: str) -> list[SearchResu
 
     limit = bot.bedrock_knowledge_base.search_params.max_results
     knowledge_base_id = bot.bedrock_knowledge_base.knowledge_base_id
+    kb_metadata_filter = bot.bedrock_knowledge_base.kb_metadata_filter
 
+    # bedrock doesn't take decimals
+    def convert_decimals(obj):
+        if isinstance(obj, list):
+            return [convert_decimals(i) for i in obj]
+        elif isinstance(obj, dict):
+            return {k: convert_decimals(v) for k, v in obj.items()}
+        elif isinstance(obj, Decimal):
+            # Convert to int if it's a whole number
+            if obj.as_tuple().exponent >= 0:
+                return int(obj)
+            # Convert to float if it has decimal places
+            return float(obj)
+        return obj
+    
+    vector_search_configuration = {
+        "numberOfResults": limit,
+        "overrideSearchType": search_type
+    }
+    if kb_metadata_filter:
+        converted_kb_metadata_filter = convert_decimals(kb_metadata_filter)
+        vector_search_configuration["filter"] = converted_kb_metadata_filter
+    
     try:
         response = agent_client.retrieve(
             knowledgeBaseId=knowledge_base_id,
             retrievalQuery={"text": query},
             retrievalConfiguration={
-                "vectorSearchConfiguration": {
-                    "numberOfResults": limit,
-                    "overrideSearchType": search_type,
-                }
+                "vectorSearchConfiguration": vector_search_configuration
             },
         )
 

@@ -98,6 +98,7 @@ class BedrockKnowledgeBaseInput(BaseSchema):
     web_crawling_filters: WebCrawlingFilters = WebCrawlingFilters(
         exclude_patterns=[], include_patterns=[]
     )
+    kb_metadata_filter: dict | None
 
 
 class BedrockKnowledgeBaseOutput(BaseSchema):
@@ -119,3 +120,4 @@ class BedrockKnowledgeBaseOutput(BaseSchema):
     web_crawling_filters: WebCrawlingFilters = WebCrawlingFilters(
         exclude_patterns=[], include_patterns=[]
     )
+    kb_metadata_filter: dict | None

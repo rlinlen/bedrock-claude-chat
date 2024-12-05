@@ -78,3 +78,4 @@ class BedrockKnowledgeBaseModel(BaseModel):
     web_crawling_filters: WebCrawlingFiltersModel = WebCrawlingFiltersModel(
         exclude_patterns=[], include_patterns=[]
     )
+    kb_metadata_filter: dict | None = None
